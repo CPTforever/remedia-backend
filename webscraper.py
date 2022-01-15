@@ -14,8 +14,8 @@ import requests
 CLEANR = re.compile('<.*?>') 
 
 def cleanhtml(raw_html):
-  cleantext = re.sub(CLEANR, "", str(raw_html))  
-  return cleantext
+    cleantext = re.sub(CLEANR, "", str(raw_html))  
+    return cleantext
 
 
 
@@ -50,16 +50,19 @@ def drugProcess(drugURL):
     title = cleanhtml(soup.article.find("h1", class_="with-also"))
     prouncation = cleanhtml(soup.article.find("span", id="d-pronunciation"))
     why = soup.article.find("div", id="why").find("div", id="section-1").p
-    how = soup.article.find("div", id="how").find("div", id="section-2").p
-    other = soup.article.find("div", id="other-uses")
-    care = soup.article.find("div", id="precautions")
+    #how = soup.article.find("div", id="how").find("div", id="section-2").p
+    #other = soup.article.find("div", id="other-uses")
+    #care = soup.article.find("div", id="precautions")
     diet = soup.article.find("div", id="special-dietary")
-    forget = soup.article.find("div", id="if-i-forget")
+    #forget = soup.article.find("div", id="if-i-forget")
     store = soup.article.find("div", id="storage-conditions")
+
     side = soup.article.find("div", id="side-effects").find("div", id="section-side-effects")
+
     over = soup.article.find("div", id="overdose")
-    other = soup.article.find("div", id="other-information")
-    brand = soup.article.find("div", id="brand-name-1")
+    #other = soup.article.find("div", id="other-information")
+    brandSolo = soup.article.find("div", id="brand-name-1")
+    brandCombo = soup.article.find("div", id="brand-name-2")
 
     # Gets one sentence on why you should take this drug
     cleanWhy = cleanhtml(why)
@@ -67,13 +70,16 @@ def drugProcess(drugURL):
     # Gets a list of side effects and serious side effects
     sideEffects = []
     doctorEffects = []
-    for x in side.find_all("h3"):
-        tag = cleanhtml(x).find("serious")
-        for y in x.find_next_sibling('ul'):
-            if tag != -1:
-                doctorEffects.append(cleanhtml(y))
-            else:
-                sideEffects.append(cleanhtml(y))
+    try:
+        for x in side.find_all("h3"):
+            tag = cleanhtml(x).find("serious")
+            for y in x.find_next_sibling('ul'):
+                if tag != -1:
+                    doctorEffects.append(cleanhtml(y))
+                else:
+                    sideEffects.append(cleanhtml(y))
+    except:
+        pass
 
     # Tells you to eat healthy 
     cleanDiet = cleanhtml(diet.p)
@@ -86,13 +92,26 @@ def drugProcess(drugURL):
 
     # Lists overdose symptoms
     overdoseSymptoms = []
-    for x in over.ul:
-        overdoseSymptoms.append(cleanhtml(x))
-
+    try:
+        for x in over.ul:
+            overdoseSymptoms.append(cleanhtml(x))
+    except:
+        pass
     # Lists brand names that use this product
     brandNames = []
-    for x in brand.ul:
-        brandNames.append(cleanhtml(x))
+    try:
+        try:
+            for x in brandSolo.ul:
+                brandNames.append(cleanhtml(x))
+        except:
+            pass
+        try:
+            for y in brandCombo.ul:
+                brandNames.append(cleanhtml(y))
+        except:
+            pass
+    except:
+        pass
 
     return { 
         "Name": title,
@@ -104,7 +123,7 @@ def drugProcess(drugURL):
         "BrandNames" : brandNames,
         "regEffects" : sideEffects,
         "severeEffects" : doctorEffects,
-        "CombinedEffects" : sideEffects + doctorEffects + overdoseSymptoms,
+        "CombinedEffects" : overdoseSymptoms + doctorEffects + sideEffects,
     }
 
 
@@ -121,11 +140,11 @@ def this_works():
 @app.route("/multi", methods=["POST"])
 def multi():
     if request.method == "POST":
-        text = request.form.get('brand')
         try:
+            text = request.form.get('brand')
             return drugProcess(drugSearch(text))
         except:
-            pass
+            return "No drug"
         
 """ 
 with open('data.json', 'w') as f:
