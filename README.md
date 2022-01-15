@@ -7,4 +7,4 @@ python webscraper.py
 ```
 
 Use postman to send a request to localhost:8081/multi
-with brand: advil
+with brand: drugName
