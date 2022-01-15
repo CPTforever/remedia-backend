@@ -1,3 +1,4 @@
+from textwrap import indent
 import requests
 from bs4 import BeautifulSoup
 import re
@@ -88,7 +89,7 @@ def drugProcess(drugURL):
     for x in brand.ul:
         brandNames.append(cleanhtml(x))
 
-    return json.dumps({ 
+    return { 
         "Name": title,
         "Pronunciation": prouncation.replace('\n', "").replace('\r', ''),
         "Diet": cleanDiet,
@@ -98,7 +99,7 @@ def drugProcess(drugURL):
         "BrandNames" : brandNames,
         "regEffects" : sideEffects,
         "severeEffects" : doctorEffects,
-    }, indent=4)
+    }
 
-
- print(drugSearch("advil"))
+with open('data.json', 'w') as f:
+    json.dump(drugProcess(drugSearch("advil")), f, indent=4)
