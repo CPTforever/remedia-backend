@@ -89,18 +89,19 @@ def drugProcess(drugURL):
     try:
         cleanDiet = cleanhtml(diet.p)
     except:
-        cleanDiet = ""
+        cleanDiet = "Unless your doctor tells you otherwise, continue your normal diet."
+        
     # Lists how to store it
     try:
         cleanStore = cleanhtml(store.p)
     except:
-        cleanStore = ""
+        cleanStore = "Keep this medication in the container it came in, tightly closed, and out of reach of children."
 
     try:
         # Lists what you should do when overdosing
         cleanOverdose = cleanhtml(over.p)
     except:
-        pass
+        cleanOverdose = ""
 
     # Lists overdose symptoms
     overdoseSymptoms = []
@@ -157,14 +158,14 @@ def multi():
             text = request.form.get('brand')
             return drugProcess(drugSearch(text))
         except:
-            return "No drug"
+            return {}
         
 """ 
 with open('data.json', 'w') as f:
     json.dump(drugProcess(drugSearch("advil")), f, indent=4)
 
 """
-url = drugSearch("APPG")
+url = drugSearch("A.R. Eye Drops")
 print(url)
 drugProcess(url)
 if __name__ == "__main__":
