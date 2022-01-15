@@ -66,7 +66,7 @@ def drugProcess(drugURL):
 
     try:
         # Gets one sentence on why you should take this drug
-        cleanWhy = cleanhtml(why.p)
+        cleanWhy = cleanhtml(why)
     except:
         cleanWhy = ""
 
@@ -101,7 +101,7 @@ def drugProcess(drugURL):
         cleanOverdose = cleanhtml(over.p)
     except:
         pass
-    
+
     # Lists overdose symptoms
     overdoseSymptoms = []
     try:
