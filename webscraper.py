@@ -64,8 +64,11 @@ def drugProcess(drugURL):
     brandSolo = soup.article.find("div", id="brand-name-1")
     brandCombo = soup.article.find("div", id="brand-name-2")
 
-    # Gets one sentence on why you should take this drug
-    cleanWhy = cleanhtml(why)
+    try:
+        # Gets one sentence on why you should take this drug
+        cleanWhy = cleanhtml(why.p)
+    except:
+        cleanWhy = ""
 
     # Gets a list of side effects and serious side effects
     sideEffects = []
@@ -81,15 +84,24 @@ def drugProcess(drugURL):
     except:
         pass
 
+
     # Tells you to eat healthy 
-    cleanDiet = cleanhtml(diet.p)
-
+    try:
+        cleanDiet = cleanhtml(diet.p)
+    except:
+        cleanDiet = ""
     # Lists how to store it
-    cleanStore = cleanhtml(store.p)
+    try:
+        cleanStore = cleanhtml(store.p)
+    except:
+        cleanStore = ""
 
-    # Lists what you should do when overdosing
-    cleanOverdose = cleanhtml(over.p)
-
+    try:
+        # Lists what you should do when overdosing
+        cleanOverdose = cleanhtml(over.p)
+    except:
+        pass
+    
     # Lists overdose symptoms
     overdoseSymptoms = []
     try:
@@ -116,6 +128,7 @@ def drugProcess(drugURL):
     return { 
         "Name": title,
         "Pronunciation": prouncation.replace('\n', "").replace('\r', ''),
+        "Why": cleanWhy,
         "Diet": cleanDiet,
         "Store": cleanStore,
         "Overdose": cleanOverdose,
@@ -151,7 +164,9 @@ with open('data.json', 'w') as f:
     json.dump(drugProcess(drugSearch("advil")), f, indent=4)
 
 """
-
+url = drugSearch("APPG")
+print(url)
+drugProcess(url)
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8081)))
 
