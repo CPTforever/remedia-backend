@@ -1,14 +1,22 @@
-from textwrap import indent
+from flask import Flask, request, jsonify, json
+from flask_cors import CORS
+import io
+import os
 import requests
 from bs4 import BeautifulSoup
 import re
 import json
+from requests.api import head
+
+
+import requests
 
 CLEANR = re.compile('<.*?>') 
 
 def cleanhtml(raw_html):
   cleantext = re.sub(CLEANR, "", str(raw_html))  
   return cleantext
+
 
 
 # Takes in a name
@@ -30,8 +38,6 @@ def drugSearch(drugName):
     
     return drugURL
 
-
-
 # Takes in a URL, extracts useful data
 # Returns a json
 def drugProcess(drugURL):
@@ -44,7 +50,6 @@ def drugProcess(drugURL):
     title = cleanhtml(soup.article.find("h1", class_="with-also"))
     prouncation = cleanhtml(soup.article.find("span", id="d-pronunciation"))
     why = soup.article.find("div", id="why").find("div", id="section-1").p
-
     how = soup.article.find("div", id="how").find("div", id="section-2").p
     other = soup.article.find("div", id="other-uses")
     care = soup.article.find("div", id="precautions")
@@ -99,7 +104,35 @@ def drugProcess(drugURL):
         "BrandNames" : brandNames,
         "regEffects" : sideEffects,
         "severeEffects" : doctorEffects,
+        "CombinedEffects" : sideEffects + doctorEffects + overdoseSymptoms,
     }
 
+
+
+app = Flask(__name__)
+CORS(app)
+
+@app.route('/')
+def this_works():
+    print('this works')
+    
+    return "This works..."
+
+@app.route("/multi", methods=["POST"])
+def multi():
+    if request.method == "POST":
+        text = request.form.get('brand')
+        try:
+            return drugProcess(drugSearch(text))
+        except:
+            pass
+        
+""" 
 with open('data.json', 'w') as f:
     json.dump(drugProcess(drugSearch("advil")), f, indent=4)
+
+"""
+
+if __name__ == "__main__":
+    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8081)))
+
