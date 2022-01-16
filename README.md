@@ -13,11 +13,15 @@ There are two requests you can make both of which are post requests.
 It webscrapes https://www.drugs.com/imprints.php to find the pill information. https://www.drugs.com/ for the drug informations.
 
 localhost:port/multi
+
 BRAND: DRUG
 
 localhost:port/pill
+
 IMPRINT: STRING
+
 SHAPE: SHAPE OF PILL
+
 COLOR: COLOR OF PILL
 
 ## Drug List generator 
