@@ -63,6 +63,17 @@ colorList = {
     "tan": 11,
 }
 
+def uncombine(string):
+    a = cleanhtml(string)
+    if "," in a:
+        a = a.split(",")
+        for z in range(len(a)):
+            a[z] = a[z].replace("or ", "").replace("and ", "").strip()
+        return a
+    else:
+        return [a]
+
+
 # Takes in a name
 # Returns a URL
 def drugSearch(drugName):
@@ -128,9 +139,9 @@ def drugProcess(drugURL):
             tag = cleanhtml(x).find("serious")
             for y in x.find_next_sibling('ul'):
                 if tag != -1:
-                    doctorEffects.append(cleanhtml(y))
+                    doctorEffects+=uncombine(y)
                 else:
-                    sideEffects.append(cleanhtml(y))
+                    sideEffects+=uncombine(y)
     except:
         pass
 
@@ -157,7 +168,7 @@ def drugProcess(drugURL):
     overdoseSymptoms = []
     try:
         for x in over.ul:
-            overdoseSymptoms.append(cleanhtml(x))
+            overdoseSymptoms+=uncombine(x)
     except:
         pass
     # Lists brand names that use this product
