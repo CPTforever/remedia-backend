@@ -50,7 +50,7 @@ def drugProcess(drugURL):
     title = cleanhtml(soup.article.find("h1", class_="with-also"))
     prouncation = cleanhtml(soup.article.find("span", id="d-pronunciation"))
     why = soup.article.find("div", id="why").find("div", id="section-1").p
-    #how = soup.article.find("div", id="how").find("div", id="section-2").p
+    how = soup.article.find("div", id="how").find("div", id="section-2").p
     #other = soup.article.find("div", id="other-uses")
     #care = soup.article.find("div", id="precautions")
     diet = soup.article.find("div", id="special-dietary")
@@ -69,6 +69,12 @@ def drugProcess(drugURL):
         cleanWhy = cleanhtml(why)
     except:
         cleanWhy = ""
+
+    try:
+        # Gets one sentence on why you should take this drug
+        cleanHow = cleanhtml(how)
+    except:
+        cleanHow = ""
 
     # Gets a list of side effects and serious side effects
     sideEffects = []
@@ -95,7 +101,7 @@ def drugProcess(drugURL):
     try:
         cleanStore = cleanhtml(store.p)
     except:
-        cleanStore = "Keep this medication in the container it came in, tightly closed, and out of reach of children."
+        cleanStore = "Keep this medication in the container it came in, tightly closed, and out of reach of children. Store it at room temperature and away from excess heat and moisture (not in the bathroom)."
 
     try:
         # Lists what you should do when overdosing
@@ -130,6 +136,7 @@ def drugProcess(drugURL):
         "Name": title,
         "Pronunciation": prouncation.replace('\n', "").replace('\r', ''),
         "Why": cleanWhy,
+        "How": cleanHow,
         "Diet": cleanDiet,
         "Store": cleanStore,
         "Overdose": cleanOverdose,
