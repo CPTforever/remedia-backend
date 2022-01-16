@@ -250,7 +250,6 @@ def pill():
         imprint = request.form.get('imprint')
         shape = request.form.get('shape')
         color = request.form.get('color')
-        print(pillImage(imprint, shape, color))
         try:
             return pillImage(imprint, shape, color)
         except:
