@@ -1,3 +1,4 @@
+import imp
 from flask import Flask, request, jsonify, json
 from flask_cors import CORS
 import io
@@ -11,13 +12,56 @@ from requests.api import head
 
 import requests
 
+app = Flask(__name__)
+CORS(app)
+
 CLEANR = re.compile('<.*?>') 
 
 def cleanhtml(raw_html):
     cleantext = re.sub(CLEANR, "", str(raw_html))  
     return cleantext
 
+shapeList = {
+    "any": 0,
+    "round":24,
+    "capsule":5,
+    "oval":11,
+    "egg":9,
+    "barrel":1,
+    "rectangle":23,
+    "3 side": 32,
+    "4 side": 14,
+    "5 side": 13,
+    "6 side": 27,
+    "7 side": 25,
+    "8 side": 10,
+    "U shape": 33,
+    "8 shape": 12,
+    "heart": 16,
+    "kidney": 18,
+    "gear": 15,
+    "character": 6
+    }
 
+colorList = {
+    "any": "",
+    "white": 12,
+    "beige": 14,
+    "black": 73,
+    "blue": 1,
+    "brown": 2,
+    "clear": 3,
+    "gold": 4,
+    "gray": 5,
+    "green": 6,
+    "maroon": 44,
+    "orange": 7,
+    "peach": 74,
+    "pink": 8,
+    "purple": 9,
+    "red": 10,
+    "tan": 11,
+}
 
 # Takes in a name
 # Returns a URL
@@ -147,10 +191,30 @@ def drugProcess(drugURL):
         "CombinedEffects" : overdoseSymptoms + doctorEffects + sideEffects,
     }
 
+def pillImage(imprint, color, shape):
+    pillURL = "https://www.drugs.com/imprints.php?imprint={}&color={}&shape={}".format(imprint.lower(), colorList[color], shapeList[shape])
 
+    image = []
+    name = []
 
-app = Flask(__name__)
-CORS(app)
+    # Searching for the drug
+    page = requests.get(pillURL)
+    soup = BeautifulSoup(page.content, "html.parser")
+
+    
+    for x in soup.find_all('img'):
+        a = x.get("src")
+        if a[:5] == "https":
+            image.append(a)
+
+    for x in soup.find('div', 'contentBox').findAll('div', class_="pid-details"):
+        name.append(cleanhtml(x.li.a))
+
+    pills = dict()
+    for x in range(len(name)):
+        pills[name[x]] = image[x]
+    
+    return pills
 
 @app.route('/')
 def this_works():
@@ -166,12 +230,27 @@ def multi():
             return drugProcess(drugSearch(text))
         except:
             return {}
-        
+
+
+    
+@app.route("/pill", methods=["POST"])
+def pill():
+    if request.method == "POST":
+        imprint = request.form.get('imprint')
+        shape = request.form.get('shape')
+        color = request.form.get('color')
+        print(pillImage(imprint, shape, color))
+        try:
+            return pillImage(imprint, shape, color)
+        except:
+            return "No pill"
+
 """ 
 with open('data.json', 'w') as f:
     json.dump(drugProcess(drugSearch("advil")), f, indent=4)
 
 """
+
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8081)))
