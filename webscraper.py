@@ -238,7 +238,8 @@ def multi():
             return jsonify({"success": drugProcess(drugSearch(text))})
         except:
             return jsonify({"failure": "No drug"})
-
+    else:
+        return jsonify({"failure": "Not POST request"})
     
 @app.route("/pill", methods=["POST"])
 def pill():
@@ -250,6 +251,8 @@ def pill():
             return jsonify({"success": pillImage(imprint, shape, color)})
         except:
             return jsonify({"failure": "No pill"})
+    else:
+        return jsonify({"failure": "Not POST request"})
 
 """ 
 with open('data.json', 'w') as f:
