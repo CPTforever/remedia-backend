@@ -1,3 +1,4 @@
+from cmath import pi
 from turtle import color
 from flask import Flask, request, jsonify, json
 from flask_cors import CORS
@@ -49,22 +50,36 @@ colorList = {
     "purple": 9,
     "red": 10,
     "tan": 11,
-
-
 }
 
-imprint = "".replace(" ", "+")
-color = "any"
-shape = "any"
-pillURL = "https://www.drugs.com/imprints.php?imprint={}&color={}&shape={}".format(imprint, colorList[color], shapeList[shape])
+CLEANR = re.compile('<.*?>') 
 
+def cleanhtml(raw_html):
+    cleantext = re.sub(CLEANR, "", str(raw_html))  
+    return cleantext
+
+imprint = "G 12".replace(" ", "+")
+color = "white"
+shape = "oval"
+pillURL = "https://www.drugs.com/imprints.php?imprint={}&color={}&shape={}".format(imprint, colorList[color], shapeList[shape])
+print(pillURL)
 
 # Searching for the drug
 page = requests.get(pillURL)
 soup = BeautifulSoup(page.content, "html.parser")
-print(soup.find("div", class_="contentBox").find_all("img"))
-"""
+image = []
+name = []
+for x in soup.find_all('img'):
+    a = x.get("src")
+    if a[:5] == "https":
+        image.append(a)
+for x in soup.find('div', 'contentBox').findAll('div', class_="pid-details"):
+    name.append(cleanhtml(x.li.a))
 
+full = zip(name, image)
+for x in full:
+    print(x)
+"""
 page = requests.get(pillURL)
 soup = BeautifulSoup(page.content, "html.parser")
 
@@ -74,5 +89,4 @@ results = document.find("ol", class_="results")
 drugURL = nlmsearch + results.div.a.get('href')
 
 # Getting the page with drug info
-
 """
