@@ -222,7 +222,7 @@ def pillImage(imprint, color, shape):
     for x in range(len(name)):
         pills[name[x]] = image[x]
     
-    return pills
+    return name[0]
 
 @app.route('/')
 def this_works():
@@ -242,12 +242,13 @@ def multi():
     
 @app.route("/pill", methods=["POST"])
 def pill():
+    imprint = request.form.get('imprint')
+    shape = request.form.get('shape')
+    color = request.form.get('color')
+
     if request.method == "POST":
-        imprint = request.form.get('imprint')
-        shape = request.form.get('shape')
-        color = request.form.get('color')
         try:
-            return jsonify({"success": pillImage(imprint, shape, color)})
+            return jsonify({"success": pillImage(imprint, color, shape)})
         except:
             return jsonify({"failure": "No pill"})
 
@@ -259,5 +260,5 @@ with open('data.json', 'w') as f:
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
+    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8081)))
 
