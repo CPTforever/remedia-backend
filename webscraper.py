@@ -172,9 +172,7 @@ with open('data.json', 'w') as f:
     json.dump(drugProcess(drugSearch("advil")), f, indent=4)
 
 """
-url = drugSearch("A.R. Eye Drops")
-print(url)
-drugProcess(url)
+
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8081)))
 
