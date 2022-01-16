@@ -238,9 +238,9 @@ def multi():
     if request.method == "POST":
         try:
             text = request.form.get('brand')
-            return jsonify({"success", drugProcess(drugSearch(text))})
+            return jsonify({"success": drugProcess(drugSearch(text))})
         except:
-            return jsonify({"failure", "No drug"})
+            return jsonify({"failure": "No drug"})
 
     
 @app.route("/pill", methods=["POST"])
@@ -250,9 +250,9 @@ def pill():
         shape = request.form.get('shape')
         color = request.form.get('color')
         try:
-            return jsonify({"success", pillImage(imprint, shape, color)})
+            return jsonify({"success": pillImage(imprint, shape, color)})
         except:
-            return jsonify({"failure", "No pill"})
+            return jsonify({"failure": "No pill"})
 
 """ 
 with open('data.json', 'w') as f:
@@ -262,5 +262,5 @@ with open('data.json', 'w') as f:
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8081)))
+    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
 
