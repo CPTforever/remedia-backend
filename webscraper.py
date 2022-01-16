@@ -1,13 +1,10 @@
-import imp
 from flask import Flask, request, jsonify, json
 from flask_cors import CORS
-import io
 import os
 import requests
 from bs4 import BeautifulSoup
 import re
-import json
-from requests.api import head
+
 
 
 import requests
@@ -262,5 +259,5 @@ with open('data.json', 'w') as f:
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
+    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8081)))
 
