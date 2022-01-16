@@ -231,17 +231,16 @@ def pillImage(imprint, color, shape):
 def this_works():
     print('this works')
     
-    return "This works..."
+    return jsonify({"Success", "This works..."})
 
 @app.route("/multi", methods=["POST"])
 def multi():
     if request.method == "POST":
         try:
             text = request.form.get('brand')
-            return drugProcess(drugSearch(text))
+            return jsonify({"success", drugProcess(drugSearch(text))})
         except:
-            return {}
-
+            return jsonify({"failure", "No drug"})
 
     
 @app.route("/pill", methods=["POST"])
@@ -251,9 +250,9 @@ def pill():
         shape = request.form.get('shape')
         color = request.form.get('color')
         try:
-            return pillImage(imprint, shape, color)
+            return jsonify({"success", pillImage(imprint, shape, color)})
         except:
-            return "No pill"
+            return jsonify({"failure", "No pill"})
 
 """ 
 with open('data.json', 'w') as f:
