@@ -1,4 +1,8 @@
 # backend
+This was for the Hackathon CruzHacks 2022!
+
+Here is our dev post: https://devpost.com/software/cruzhacks-2022-9suva2
+
 ## Setup
 ```
 virtualenv ./venv
